@@ -1,0 +1,137 @@
+{
+  "info": {
+    "name": "Laravel E-commerce API",
+    "_postman_id": "ecom-api-collection-001",
+    "description": "Full API collection for testing the Laravel 12 E-commerce API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type","value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"John Doe\",\"email\":\"john@example.com\",\"password\":\"secret123\"}"
+            },
+            "url": {"raw": "http://localhost:8000/api/v1/auth/register","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","auth","register"]}
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type","value": "application/json"}],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"john@example.com\",\"password\":\"secret123\"}"
+            },
+            "url": {"raw": "http://localhost:8000/api/v1/auth/login","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","auth","login"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "List Products",
+          "request": {
+            "method": "GET",
+            "url": {"raw":"http://localhost:8000/api/v1/products","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","products"]}
+          }
+        },
+        {
+          "name": "Get Product",
+          "request": {
+            "method": "GET",
+            "url": {"raw":"http://localhost:8000/api/v1/products/1","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","products","1"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "View Cart",
+          "request": {
+            "method": "GET",
+            "header": [{"key":"Authorization","value":"Bearer {{token}}"}],
+            "url": {"raw":"http://localhost:8000/api/v1/cart","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","cart"]}
+          }
+        },
+        {
+          "name": "Add Item",
+          "request": {
+            "method": "POST",
+            "header": [{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],
+            "body":{"mode":"raw","raw":"{\"product_id\":1,\"quantity\":2}"},
+            "url":{"raw":"http://localhost:8000/api/v1/cart/items","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","cart","items"]}
+          }
+        },
+        {
+          "name": "Update Item",
+          "request": {
+            "method": "PATCH",
+            "header": [{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],
+            "body":{"mode":"raw","raw":"{\"quantity\":3}"},
+            "url":{"raw":"http://localhost:8000/api/v1/cart/items/1","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","cart","items","1"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Confirm Order",
+          "request": {
+            "method": "POST",
+            "header": [{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],
+            "body":{"mode":"raw","raw":"{\"shipping_address\":{\"line1\":\"Rua A\",\"city\":\"Maputo\",\"province\":\"MP\",\"country\":\"MZ\"}}"},
+            "url":{"raw":"http://localhost:8000/api/v1/checkout/confirm","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","checkout","confirm"]}
+          }
+        },
+        {
+          "name": "View Order",
+          "request": {
+            "method": "GET",
+            "header": [{"key":"Authorization","value":"Bearer {{token}}"}],
+            "url":{"raw":"http://localhost:8000/api/v1/orders/1","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","orders","1"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Init Payment",
+          "request": {
+            "method": "POST",
+            "header": [{"key":"Authorization","value":"Bearer {{token}}"},{"key":"Content-Type","value":"application/json"}],
+            "body":{"mode":"raw","raw":"{\"provider\":\"mpesa\"}"},
+            "url":{"raw":"http://localhost:8000/api/v1/orders/1/payments/init","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","orders","1","payments","init"]}
+          }
+        },
+        {
+          "name": "Payment Webhook",
+          "request": {
+            "method": "POST",
+            "header": [{"key":"Content-Type","value":"application/json"}],
+            "body":{"mode":"raw","raw":"{\"payment_id\":1,\"status\":\"captured\"}"},
+            "url":{"raw":"http://localhost:8000/api/v1/payments/webhook/mpesa","protocol":"http","host":["localhost"],"port":"8000","path":["api","v1","payments","webhook","mpesa"]}
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {"key":"token","value":""}
+  ]
+}

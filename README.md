@@ -1,60 +1,262 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# E-commerce API (Laravel 12)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+API RESTful for e-commerce, built with **Laravel 12**, ready to be consumed by **web frontends** (Next.js/Nuxt.js) or **mobile apps** (React Native/Flutter).
 
-## About Laravel
+Includes authentication, products, cart, orders, and base build prototype for payment integrations (MPesa, e-Mola, Stripe, PayPal, Manual).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## <tags>Technologies</tags>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* PHP 8.2 / Laravel 12
+* MySQL / MariaDB
+* Sanctum (API Token Auth)
+* Spatie Permission (RBAC)
+* Redis (optional caching)
+* PHPUnit / Pest (tests)
+* Postman / Insomnia (API testing)
+* CORS & Rate-limiting
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## <tags>Setup</tags>
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```bash
+git clone <repo-url> ecommerce-api
+cd ecommerce-api
+cp .env.example .env
+composer install
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### <tags>Environment Variables</tags>
 
-## Laravel Sponsors
+```env
+APP_NAME=EcommerceAPI
+APP_URL=http://localhost:8000
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ecommerce_db
+DB_USERNAME=root
+DB_PASSWORD=
 
-### Premium Partners
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
+SANCTUM_STATEFUL_DOMAINS=localhost:3000
+ADMIN_EMAILS=admin@exemplo.com
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+MPESA_CONSUMER_KEY=
+MPESA_CONSUMER_SECRET=
+EMOLA_API_KEY=
+STRIPE_KEY=
+STRIPE_SECRET=
+PAYPAL_CLIENT_ID=
+PAYPAL_SECRET=
+```
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## <tags>Authentication</tags>
 
-## Code of Conduct
+### Register
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```http
+POST /api/v1/auth/register
+Content-Type: application/json
 
-## Security Vulnerabilities
+{
+    "name": "Jose",
+    "email": "jose@example.com",
+    "password": "secret123"
+}
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+**Response:**
+
+```json
+{
+  "token": "<sanctum-token>"
+}
+```
+
+### Login
+
+```http
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "jose@example.com",
+    "password": "secret123"
+}
+```
+
+**Response:**
+
+```json
+{
+  "token": "<sanctum-token>"
+}
+```
+
+---
+
+## <tags>Cart</tags>
+
+Requires **Bearer Token**.
+
+* List items: `GET /api/v1/cart`
+* Add item: `POST /api/v1/cart/items`
+
+```json
+{
+  "product_id": 1,
+  "quantity": 2
+}
+```
+
+* Update item: `PATCH /api/v1/cart/items/{id}`
+
+```json
+{
+  "quantity": 3
+}
+```
+
+* Remove item: `DELETE /api/v1/cart/items/{id}`
+
+---
+
+## <tags>Products</tags>
+
+* List active products: `GET /api/v1/products`
+* View product details: `GET /api/v1/products/{slug}`
+
+**Admin / Product Manager:** create, update, delete products using **Spatie RBAC**.
+
+```php
+Route::middleware('can:manage-products')->group(function () {
+    Route::post('products', [ProductController::class, 'store']);
+    Route::put('products/{product}', [ProductController::class, 'update']);
+    Route::delete('products/{product}', [ProductController::class, 'destroy']);
+});
+```
+
+---
+
+## <tags>Orders</tags>
+
+* Confirm checkout / create order: `POST /api/v1/checkout/confirm`
+
+```json
+{
+  "shipping_address": {
+    "line1": "Rua A",
+    "city": "Maputo",
+    "province": "MP",
+    "country": "MZ"
+  }
+}
+```
+
+* List orders: `GET /api/v1/orders`
+* Order detail: `GET /api/v1/orders/{order}`
+
+> Only the order owner can view/update.
+
+---
+
+## <tags>Payments</tags>
+
+* Initiate payment: `POST /api/v1/orders/{order}/payments/init`
+
+```json
+{
+  "provider": "mpesa"
+}
+```
+
+* Public webhook: `POST /api/v1/payments/webhook/{provider}`
+
+  * HMAC validation
+  * Idempotency
+  * Automatically updates order status
+
+---
+
+## <tags>Models & Relationships</tags>
+
+* **User**
+* **Product**
+* **Cart**
+* **CartItem**
+* **Order**
+* **OrderItem**
+* **Payment**
+
+### Example: Cart → CartItems
+
+```php
+$cart = Cart::with('items.product')->where('user_id', $userId)->first();
+$total = $cart->items->sum(fn($item) => $item->total);
+```
+
+---
+
+## <tags>Best Practices</tags>
+
+* Spatie RBAC with Gates and Policies
+* Middleware to force **JSON responses**
+* API Rate Limit (60 requests/min)
+* Configurable CORS
+* Factories & Seeders for testing
+* Feature Tests included (Auth, Products, Cart/Order flow)
+* HTTPS, HSTS, CSP headers
+* Queue for emails / payment webhooks
+
+---
+
+## <tags>Testing</tags>
+
+```bash
+php artisan test
+```
+
+Feature test example:
+
+```php
+it('complete flow: add cart -> confirm order', function () {
+    $user = User::factory()->create();
+    $product = Product::factory()->create(['stock'=>5]);
+
+    $token = $user->createToken('t')->plainTextToken;
+    $headers = ['Authorization' => 'Bearer '.$token];
+
+    $this->postJson('/api/v1/cart/items', ['product_id'=>$product->id,'quantity'=>2], $headers)->assertCreated();
+
+    $orderResp = $this->postJson('/api/v1/checkout/confirm', [
+        'shipping_address' => ['line1' => 'Rua A', 'city' => 'Maputo', 'province' => 'MP', 'country' => 'MZ']
+    ], $headers)->assertOk();
+
+    expect($orderResp->json('data.id'))->toBeInt();
+});
+```
+
+---
+
+## <tags>Production Recommendations</tags>
+
+* Use **HTTPS / TLS**
+* Protect webhooks with **HMAC + idempotency**
+* Structured JSON logs + Sentry
+* Automatic DB + storage backups
+* Redis caching for catalog + CDN
+* Scale queues for emails and payments
+
+> With these components, the API is **ready for consumption** by web and mobile clients, maintaining **stable contracts** and following **secure clean code practices**.
 
 ## License
 

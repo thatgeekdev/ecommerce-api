@@ -1,24 +1,46 @@
+# Logs and temp files
 *.log
+*.cache
+*.bak
+*.tmp
+
+# Local OS files
 .DS_Store
+Thumbs.db
+
+# Environment files
 .env
-.env.backup
-.env.production
+.env.*
+!.env.example
+
+# IDE / editor configs
+/.idea
+/.vscode
+/.fleet
+/.zed
 .phpactor.json
 .phpunit.result.cache
-/.fleet
-/.idea
-/.nova
 /.phpunit.cache
-/.vscode
-/.zed
-/auth.json
+
+# Node & frontend
 /node_modules
 /public/build
 /public/hot
-/public/storage
-/storage/*.key
-/storage/pail
+
+# Composer
 /vendor
+/auth.json
+
+# Homestead
 Homestead.json
 Homestead.yaml
-Thumbs.db
+
+# Storage (ignore everything, keep only required .gitignore placeholders)
+storage/*
+!storage/app/public
+!storage/framework/.gitignore
+!storage/logs/.gitignore
+!storage/debugbar/.gitignore
+
+# Laravel Nova (if used)
+.nova
